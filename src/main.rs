@@ -51,7 +51,7 @@ use regex::Regex;
 
 fn extract_view_model_name(line: &str) -> Option<String> {
     lazy_static! {
-        static ref RE: Regex = Regex::new(r"class\s+([A-Za-z_]*ViewModel)\s*").unwrap();
+        static ref RE: Regex = Regex::new(r"class\s+([A-Za-z_]*ViewModel)(?:[^A-Za-z_]|$)").unwrap();
     }
 
     RE.captures_iter(line).map(|c| c[1].to_string()).next()
@@ -88,8 +88,8 @@ mod tests {
     #[test]
     #[allow(non_snake_case)]
     fn test_extract_view_model_name_does_not_extract_ViewModelMapping() {
-        assert_ne!(
-            Some("CheeseViewModel".to_string()),
+        assert_eq!(
+            None,
             extract_view_model_name("public static class ViewModelMapping")
         );
     }
